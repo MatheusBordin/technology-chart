@@ -25,6 +25,13 @@ export class QuadrantRing extends BaseObject {
     }
 
     /**
+     * Return points.
+     */
+    public get points() {
+        return this._points;
+    }
+
+    /**
      * Return the start angle of current quadrant index.
      */
     public get startAngle() {
@@ -67,6 +74,23 @@ export class QuadrantRing extends BaseObject {
     }
 
     /**
+     * Verify colision with points in this object.
+     */
+    public verifyColision(vector: IVector, simple = true) {
+        const spacement = simple ? 10 : 20;
+
+        return this._points.find(x => {
+            const startX = x.position.x - spacement;
+            const endX = x.position.x + spacement;
+            const startY = x.position.y - spacement;
+            const endY = x.position.y + spacement;
+
+            const collide = vector.x >= startX && vector.x <= endX && vector.y >= startY && vector.y <= endY;
+            return collide;
+        });
+    }
+
+    /**
      * Draw a donut slice.
      */
     public draw(context: CanvasRenderingContext2D, reset = false) {
@@ -101,8 +125,10 @@ export class QuadrantRing extends BaseObject {
      * Prepare execution.
      */
     private _prepare() {
-        this._points = this._data.map(x =>
-            new Point(x, {
+        this._points = [];
+
+        for (const item of this._data) {
+            const point = new Point(item, {
                 angle: {
                     start: this.startAngle,
                     end: this.endAngle,
@@ -114,8 +140,14 @@ export class QuadrantRing extends BaseObject {
                 size: {
                     canvas: this._attrs.size.canvas,
                     ring: this._attrs.size.ring,
+                    point: 10
+                },
+                validation: {
+                    colision: (vector) => this.verifyColision(vector, false) != null
                 }
-            })
-        );
+            });
+
+            this._points.push(point);
+        }
     }
 }

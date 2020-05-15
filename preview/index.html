@@ -29,8 +29,38 @@
             width: 400px;
             max-width: 100%;
             max-height: 100%;
-            border: 1px solid red;
         }
+
+        #tooltip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #FFF;
+            font-size: 13px;
+            font-family: sans-serif;
+        }
+
+        #tooltip::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: calc(50% - 5px);
+            width: 0; 
+            height: 0; 
+
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(0, 0, 0, 0.8);
+        }
+
+        #tooltip.show {
+            display: inline-block;
+        }
+      
         #info {
             display: flex;
             justify-content: space-between;
@@ -75,6 +105,8 @@
 </head>
 <body>
     <div id="info"></div>
+    <p id="tooltip"></p>
+  
     <div class="container">
         <canvas></canvas>
     </div>
@@ -83,6 +115,21 @@
     <script>
         const canvas = document.querySelector("canvas");
         const infoEl = document.getElementById("info");
+        const tooltip = document.getElementById("tooltip");
+
+        canvas.addEventListener("pointenter", (e) => {
+            const x = e.detail.position.x + canvas.offsetLeft;
+            const y = e.detail.position.y + canvas.offsetTop;
+
+            tooltip.innerHTML = e.detail.data.value;
+            tooltip.classList.add("show");
+            tooltip.style.top = `${y - 40}px`;
+            tooltip.style.left = `${x - tooltip.clientWidth / 2}px`;
+        });
+
+        canvas.addEventListener("pointleave", (e) => {
+            tooltip.classList.remove("show");
+        });
 
         const settings = {
             quadrants: ["Frameworks", "Infra", "Data", "Languages"],
@@ -91,6 +138,21 @@
                 quadrantSpacement: 10,
             },
             data: [
+            {
+                    quadrant: "Frameworks",
+                    ring: "Adopt",
+                    value: "Teste",
+                },
+                {
+                    quadrant: "Infra",
+                    ring: "Adopt",
+                    value: "Teste",
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Adopt",
+                    value: "Teste",
+                },
                 {
                     quadrant: "Frameworks",
                     ring: "Adopt",
@@ -107,6 +169,26 @@
                     value: "Teste",
                 },
                 {
+                    quadrant: "Data",
+                    ring: "Trial",
+                    value: "Teste",
+                },
+                {
+                    quadrant: "Data",
+                    ring: "Trial",
+                    value: "Teste",
+                },
+                {
+                    quadrant: "Languages",
+                    ring: "Hold",
+                    value: "Teste",
+                },
+                {
+                    quadrant: "Languages",
+                    ring: "Hold",
+                    value: "Teste",
+                },
+                {
                     quadrant: "Languages",
                     ring: "Hold",
                     value: "Teste",
@@ -120,10 +202,6 @@
         };
 
         const chart = new TechnologyChart.Chart(canvas, settings, infoEl);
-
-        chart.draw();
-
-        infoEl.addEventListener('chart', console.log);
         
         const sectionDivs = settings.quadrants.reduce((sectionsAcc, quadrant) => {
             // create section element
@@ -169,8 +247,7 @@
         Object.values(sectionDivs).forEach(({ section }) => {
             infoEl.appendChild(section);
         });
-
-        console.log(sectionDivs);
+      
         // print all elements
         settings.data.forEach(({ quadrant, ring, value }) => {
             const div = document.createElement('div');
@@ -190,9 +267,6 @@
             });
             sectionDivs[quadrant].rings[ring].appendChild(div);
         });
-
-        canvas.addEventListener('dom-mouseenter', console.log)
-
     </script>
 </body>
 </html>
