@@ -1,6 +1,7 @@
 import { BaseObject } from "../objects/base";
 import { QuadrantRing } from "../objects/quadrant-ring";
 import { Setting } from "../types/setting";
+import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
 
 /**
  * Technology chart.
@@ -16,7 +17,9 @@ export class TechnologyChart {
         this._settings = Setting.create(settings);
         this._objects = [];
 
+        this._prepare();
         this._attachEvents();
+        this.draw();
     }
 
     /**
@@ -44,17 +47,7 @@ export class TechnologyChart {
      * Size of canvas.
      */
     public get size() {
-        return Math.min(this._canvas.offsetWidth, this._canvas.offsetHeight);
-    }
-
-    /**
-     * Size of the ring.
-     */
-    public get ringSize() {
-        const spacementNormalized = (this._settings.layout.quadrantSpacement / 2) / this.ringCount;
-        const ringSize = (this.size / 2) / this.ringCount;
-
-        return ringSize - spacementNormalized;
+        return Math.max(this._canvas.offsetWidth, this._canvas.offsetHeight);
     }
 
     /**
@@ -67,13 +60,15 @@ export class TechnologyChart {
     /**
      * Draw a chart.
      */
-    public draw() {
-        this._prepare();
+    public draw(reset = false) {
+        if (reset) {
+            this._prepare();
+        }
 
-        this.context.clearRect(0, 0, this._canvas.offsetWidth, this._canvas.offsetHeight);
+        this.context.clearRect(0, 0, this.size, this.size);
 
         for (const item of this._objects) {
-            item.draw(this.context);
+            item.draw(this.context, reset);
         }
     }
 
@@ -81,40 +76,66 @@ export class TechnologyChart {
      * Prepare draw process.
      */
     private _prepare() {
+        this._adjustSize();
+
+        // Create objects.
         this._objects = [];
 
-        for (let qI = 0; qI < this.quadrantCount; qI++) {
-            const quadrant = this._settings.quadrants[qI];
+        const firstRadius = calcFirstRingRadius((this.size - this._settings.layout.quadrantSpacement) / 2, this.ringCount);
 
-            for (let rI = this.ringCount - 1; rI >= 0; rI--) {
-                const ring = this._settings.rings[rI];
+        this._settings.quadrants.forEach((quadrant, qI) => {
+            let radiusAcc = 0;
 
-                const object = new QuadrantRing(
-                    this._settings.data.filter(x => x.quadrant === quadrant && x.ring === ring),
-                    {
-                        index: {
-                            quadrant: qI,
-                            ring: rI,
-                        },
-                        layout: {
-                            spacement: this._settings.layout.quadrantSpacement,
-                            color: this._settings.layout.colors[rI],
-                        },
-                        position: {
-                            x: this.size / 2,
-                            y: this.size / 2,
-                        },
-                        size: {
-                            canvas: this.size,
-                            ring: this.ringSize,
-                            quadrant: this.quadrantSize,
-                        },
-                    }
+            this._settings.rings.forEach((ring, rI) => {
+                const invertedIndex = this.ringCount - rI - 1;
+                const ringSize = calcRingRadius(firstRadius, invertedIndex);
+                radiusAcc += ringSize;
+
+                this._objects.unshift(
+                    this._createQuadrantRing(quadrant, ring, qI, rI, radiusAcc, ringSize)
                 );
+            });
+        });
+    }
 
-                this._objects.push(object);
+    /**
+     * Create quadrant ring object.
+     */
+    private _createQuadrantRing(quadrant: string, ring: string, qI: number, rI: number, radius: number, ringSize: number) {
+        return new QuadrantRing(
+            this._settings.data.filter(x => x.quadrant === quadrant && x.ring === ring),
+            {
+                index: {
+                    quadrant: qI,
+                    ring: rI,
+                },
+                layout: {
+                    spacement: this._settings.layout.quadrantSpacement,
+                    color: this._settings.layout.colors[qI][rI],
+                },
+                position: {
+                    x: this.size / 2,
+                    y: this.size / 2,
+                },
+                size: {
+                    canvas: this.size,
+                    ring: ringSize,
+                    radius,
+                    quadrant: this.quadrantSize,
+                },
             }
-        }
+        );
+    }
+
+    /**
+     * Adjust size os canvas.
+     */
+    private _adjustSize() {
+        // Configure size.
+        this._canvas.style.width = this.size + "px";
+        this._canvas.style.height = this.size + "px";
+        this._canvas.width = this.size;
+        this._canvas.height = this.size;
     }
 
     /**
@@ -122,7 +143,7 @@ export class TechnologyChart {
      */
     private _attachEvents() {
         window.addEventListener("resize", () => {
-            this.draw();
+            this.draw(true);
         });
 
         this._canvas.addEventListener("mouseenter", () => {

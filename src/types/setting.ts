@@ -33,7 +33,7 @@ export class Setting {
  * Setting layout class.
  */
 export class SettingLayout {
-    public colors: string[];
+    public colors: string[][];
     public quadrantSpacement: number;
 
     /**
@@ -41,7 +41,12 @@ export class SettingLayout {
      */
     public static create(data: SettingLayout): SettingLayout {
         return {
-            colors: data.colors ?? ["#ff9c9c", "#98defa", "#b0ff94", "#ff94ff"],
+            colors: data.colors ?? [
+                ["#6da7d1", "#86adcf", "#9abddb", "#b1cbe0"],
+                ["#6fbf7a", "#89c992", "#a3d4aa", "#b8e0be"],
+                ["#e082b1", "#e69cc1", "#e0abc5", "#e3c5d4"],
+                ["#dba374", "#e3b894", "#e6c3a5", "#f2dbc7"]
+            ],
             quadrantSpacement: data.quadrantSpacement ?? 0,
         }
     }

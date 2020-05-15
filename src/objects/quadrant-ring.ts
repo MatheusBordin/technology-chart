@@ -20,6 +20,8 @@ export class QuadrantRing extends BaseObject {
         this._attrs = attributes;
         this._data = data;
         this._points = [];
+
+        this._prepare();
     }
 
     /**
@@ -65,17 +67,13 @@ export class QuadrantRing extends BaseObject {
     }
 
     /**
-     * Return donut size in current index of ring.
-     */
-    public get radius() {
-        return this._attrs.size.ring * (this._attrs.index.ring + 1);
-    }
-
-    /**
      * Draw a donut slice.
      */
-    public draw(context: CanvasRenderingContext2D) {
-        this._prepare();
+    public draw(context: CanvasRenderingContext2D, reset = false) {
+        if (reset) {
+            this._prepare();
+        }
+
         context.save();
         context.beginPath();
         context.moveTo(this.position.x, this.position.y);
@@ -83,7 +81,7 @@ export class QuadrantRing extends BaseObject {
         context.arc(
             this.position.x,
             this.position.y,
-            this.radius,
+            this._attrs.size.radius,
             this.startAngle,
             this.endAngle,
             false
@@ -95,7 +93,7 @@ export class QuadrantRing extends BaseObject {
         context.restore();
 
         for (const point of this._points) {
-            point.draw(context);
+            point.draw(context, reset);
         }
     }
 
@@ -110,7 +108,7 @@ export class QuadrantRing extends BaseObject {
                     end: this.endAngle,
                 },
                 position: {
-                    fromOrigin: this.radius - this._attrs.size.ring,
+                    fromOrigin: this._attrs.size.radius - this._attrs.size.ring,
                     spacement: this.spacement,
                 },
                 size: {

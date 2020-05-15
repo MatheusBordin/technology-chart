@@ -26,6 +26,7 @@
         }
 
         canvas {
+            width: 400px;
             max-width: 100%;
             max-height: 100%;
             border: 1px solid red;
@@ -62,6 +63,11 @@
             font-size: 11px;
             font-weight: 400;
             text-transform: none;
+            cursor: default;
+        }
+        #info .item:hover {
+            background-color: black;
+            color: white;
         }
     </style>
 
@@ -70,7 +76,7 @@
 <body>
     <div id="info"></div>
     <div class="container">
-        <canvas width="500" height="500"></canvas>
+        <canvas></canvas>
     </div>
 
 
@@ -80,7 +86,7 @@
 
         const settings = {
             quadrants: ["Frameworks", "Infra", "Data", "Languages"],
-            rings: ["Adopt", "Access", "Trial", "Hold"],
+            rings: ["Adopt", "Assess", "Trial", "Hold"],
             layout: {
                 quadrantSpacement: 10,
             },
@@ -92,7 +98,7 @@
                 },
                 {
                     quadrant: "Infra",
-                    ring: "Access",
+                    ring: "Assess",
                     value: "Teste",
                 },
                 {

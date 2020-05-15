@@ -13,6 +13,7 @@ export interface IQuadrantRingAttributes {
         canvas: number;
         quadrant: number;
         ring: number;
+        radius: number;
     },
     layout: {
         spacement: number;
