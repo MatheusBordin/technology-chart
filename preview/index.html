@@ -30,36 +30,6 @@
             max-width: 100%;
             max-height: 100%;
         }
-
-        #tooltip {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #FFF;
-            font-size: 13px;
-            font-family: sans-serif;
-        }
-
-        #tooltip::after {
-            content: "";
-            position: absolute;
-            bottom: -5px;
-            left: calc(50% - 5px);
-            width: 0; 
-            height: 0; 
-
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid rgba(0, 0, 0, 0.8);
-        }
-
-        #tooltip.show {
-            display: inline-block;
-        }
       
         #info {
             display: flex;
@@ -95,7 +65,8 @@
             text-transform: none;
             cursor: default;
         }
-        #info .item:hover {
+        #info .item:hover,
+        #info .item.active {
             background-color: black;
             color: white;
         }
@@ -104,10 +75,12 @@
             font-weight: 400;
         }
         #info-left {
-            width: 100%;
+            margin-left: auto;
+            margin-right: 30px;
         }
         #info-right {
-            width: 100%;
+            margin-right: auto;
+            margin-left: 30px;
         }
     </style>
 
@@ -116,32 +89,45 @@
 <body>
     <h1>XP Tech Radar — Maio/2020</h1>
     <div id="info">
-        <div id="info-left"></div>
+        <div style="width: 100%">
+            <div id="info-left"></div>
+        </div>
         <div class="container">
             <canvas></canvas>
         </div>
-        <div id="info-right"></div>
+        <div style="width: 100%">
+            <div id="info-right"></div>
+        </div>
     </div>
     <p id="tooltip"></p>
   
 
 
     <script>
+        function find(arr, fn) {
+            for (let i = 0; i < arr.length; i++) {
+                let item = arr[i];
+
+                if (fn(item)) {
+                    return item;
+                }
+            }
+
+            return null;
+        }
+
         const canvas = document.querySelector("canvas");
         const tooltip = document.getElementById("tooltip");
 
         canvas.addEventListener("pointenter", (e) => {
-            const x = e.detail.position.x + canvas.offsetLeft;
-            const y = e.detail.position.y + canvas.offsetTop;
-
-            tooltip.innerHTML = e.detail.data.value;
-            tooltip.classList.add("show");
-            tooltip.style.top = `${y - 40}px`;
-            tooltip.style.left = `${x - tooltip.clientWidth / 2}px`;
+            const sections = document.querySelectorAll(".section");
+            const section = find(sections, x => x.querySelector(".title").innerText === e.detail.data.quadrant);
+            const subtitle = find(section.querySelectorAll(".subtitle"), x => !!x.innerText.match(e.detail.data.ring.toUpperCase()));
+            find(subtitle.querySelectorAll(".item"), x => x.innerText === e.detail.data.value).classList.add("active");
         });
 
         canvas.addEventListener("pointleave", (e) => {
-            tooltip.classList.remove("show");
+            document.querySelector(".item.active").classList.remove("active");
         });
 
         const settings = {
