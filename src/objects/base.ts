@@ -1,3 +1,10 @@
+
+/**
+ * Base object.
+ */
 export abstract class BaseObject {
-    public abstract draw(context: CanvasRenderingContext2D): void;
+    /**
+     * Drar de object.
+     */
+    public abstract draw(context: CanvasRenderingContext2D, reset: boolean): void;
 }

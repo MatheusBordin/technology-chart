@@ -25,6 +25,7 @@
         }
 
         canvas {
+            width: 400px;
             max-width: 100%;
             max-height: 100%;
             border: 1px solid red;
@@ -35,7 +36,7 @@
 </head>
 <body>
     <div class="container">
-        <canvas width="500" height="500"></canvas>
+        <canvas></canvas>
     </div>
 
     <script>
@@ -43,7 +44,7 @@
 
         const chart = new TechnologyChart.Chart(canvas, {
             quadrants: ["Frameworks", "Infra", "Data", "Languages"],
-            rings: ["Adopt", "Access", "Trial", "Hold"],
+            rings: ["Adopt", "Assess", "Trial", "Hold"],
             layout: {
                 quadrantSpacement: 10,
             },
@@ -55,7 +56,7 @@
                 },
                 {
                     quadrant: "Infra",
-                    ring: "Access",
+                    ring: "Assess",
                     value: "Teste",
                 },
                 {
@@ -70,8 +71,6 @@
                 },
             ]
         });
-
-        chart.draw();
     </script>
 </body>
 </html>
