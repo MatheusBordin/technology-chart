@@ -1,0 +1,30 @@
+{
+    "name": "technology-chart",
+    "version": "0.0.1",
+    "description": "Vanilla library for create technology radar chart using canvas API",
+    "main": "dist/index.min.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "test": "jest --no-cache",
+        "build": "rollup -c"
+    },
+    "author": "Matheus Bordin <mantbordin@gmail.com>, Marcello Marques",
+    "license": "ISC",
+    "files": [
+        "dist/"
+    ],
+    "directories": {
+        "lib": "lib"
+    },
+    "devDependencies": {
+        "@types/jest": "^25.2.1",
+        "@types/node": "^13.11.1",
+        "jest": "^25.3.0",
+        "rollup": "^2.1.0",
+        "rollup-plugin-json": "^4.0.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-typescript2": "^0.26.0",
+        "ts-jest": "^25.3.1",
+        "typescript": "^3.8.3"
+    }
+}
