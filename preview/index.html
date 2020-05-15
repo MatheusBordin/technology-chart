@@ -99,22 +99,35 @@
             background-color: black;
             color: white;
         }
+        h1 {
+            font-size: 34px;
+            font-weight: 400;
+        }
+        #info-left {
+            width: 100%;
+        }
+        #info-right {
+            width: 100%;
+        }
     </style>
 
     <script src="technology-chart.min.js"></script>
 </head>
 <body>
-    <div id="info"></div>
+    <h1>XP Tech Radar — Maio/2020</h1>
+    <div id="info">
+        <div id="info-left"></div>
+        <div class="container">
+            <canvas></canvas>
+        </div>
+        <div id="info-right"></div>
+    </div>
     <p id="tooltip"></p>
   
-    <div class="container">
-        <canvas></canvas>
-    </div>
 
 
     <script>
         const canvas = document.querySelector("canvas");
-        const infoEl = document.getElementById("info");
         const tooltip = document.getElementById("tooltip");
 
         canvas.addEventListener("pointenter", (e) => {
@@ -201,8 +214,12 @@
             ]
         };
 
-        const chart = new TechnologyChart.Chart(canvas, settings, infoEl);
+        const chart = new TechnologyChart.Chart(canvas, settings);
         
+        const infoEl = document.getElementById("info");
+        const infoLeftEl = document.getElementById("info-left");
+        const infoRightEl = document.getElementById("info-right");
+
         const sectionDivs = settings.quadrants.reduce((sectionsAcc, quadrant) => {
             // create section element
             const sectionDivEl = document.createElement('div');
@@ -243,9 +260,12 @@
             };
         }, {});
 
+        console.log(sectionDivs);
         // print section divs
-        Object.values(sectionDivs).forEach(({ section }) => {
-            infoEl.appendChild(section);
+        Object.entries(sectionDivs).forEach(([key, { section }]) => {
+            if (key == 'Data' || key == 'Frameworks')
+                return infoLeftEl.appendChild(section);
+            infoRightEl.appendChild(section);
         });
       
         // print all elements
