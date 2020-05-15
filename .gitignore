@@ -1,2 +1,4 @@
 dist/
 node_modules/
+preview/**/*
+!preview/index.html

@@ -10,6 +10,11 @@ export default {
             format: 'umd',
             name: 'TechnologyChart',
         },
+        {
+            file: `preview/technology-chart.min.js`,
+            format: 'umd',
+            name: 'TechnologyChart',
+        },
     ],
     plugins: [
         resolve(),
