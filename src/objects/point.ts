@@ -1,7 +1,6 @@
 import { IPointAttributes } from "../types/point";
 import { IVector } from "../types/position";
 import { SettingData } from "../types/setting";
-import { displacementSignal } from "../utils/displacement";
 import { BaseObject } from "./base";
 
 /**
@@ -24,24 +23,31 @@ export class Point extends BaseObject {
     }
 
     /**
-     * The size of point.
+     * Get data.
      */
-    public get size() {
-        return 10;
+    public get data() {
+        return this._data;
     }
 
     /**
-     * Get variation by size.
-     * Need because the spacement modify the plot.
+     * The size of point.
      */
-    public get variation() {
-        const spacement = this.size;
-        const signal = displacementSignal(this._attrs.angle.start);
+    public get size() {
+        return this._attrs.size.point;
+    }
 
-        return {
-            x: spacement * signal.x,
-            y: spacement * signal.y,
-        };
+    /**
+     * Current position.
+     */
+    public get position() {
+        return this._position;
+    }
+
+    /**
+     * Get index.
+     */
+    public get index() {
+        return this._data.index;
     }
 
     /**
@@ -60,10 +66,11 @@ export class Point extends BaseObject {
         context.arc(this._position.x, this._position.y, this.size, 0, Math.PI * 2);
         context.fillStyle = "#222";
         context.fill();
+
         // Draw the label
         context.fillStyle = "white";
-        context.font = "12pt sans-serif";
-        context.fillText(this._data.index.toString(), this._position.x - 4, this._position.y + 6);
+        context.font = "10pt sans-serif";
+        context.fillText(this._data.index.toString().padStart(2, "0"), this._position.x - 7, this._position.y + 5);
         // Close
         context.closePath();
         context.restore();
@@ -72,7 +79,7 @@ export class Point extends BaseObject {
     /**
      * Prepare point position.
      */
-    private _prepare() {
+    private _prepare(retryCount = 50) {
         const halfCanvasSize = this._attrs.size.canvas / 2;
         const angle = this._attrs.angle.start + Math.random() * (this._attrs.angle.end - this._attrs.angle.start);
         const initPoint = this._attrs.position.fromOrigin + this.size;
@@ -86,5 +93,10 @@ export class Point extends BaseObject {
             x: Math.sin((Math.PI/2) - angle) * distance + halfCanvasSize + xVar,
             y: Math.sin(angle) * distance + halfCanvasSize + yVar,
         };
+
+        const shouldRetry = this._attrs.validation.colision(this._position);
+        if (shouldRetry && retryCount > 0) {
+            this._prepare(retryCount - 1);
+        }
     }
 }

@@ -1,4 +1,5 @@
 import { BaseObject } from "../objects/base";
+import { Point } from "../objects/point";
 import { QuadrantRing } from "../objects/quadrant-ring";
 import { Setting } from "../types/setting";
 import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
@@ -11,6 +12,7 @@ export class TechnologyChart {
     private _canvas: HTMLCanvasElement;
     private _settings: Setting;
     private _objects: BaseObject[];
+    private _currPointFocus: Point;
 
 	constructor(canvas, settings) {
         this._canvas = canvas;
@@ -146,12 +148,42 @@ export class TechnologyChart {
             this.draw(true);
         });
 
-        this._canvas.addEventListener("mouseenter", () => {
-            const event = new CustomEvent("canvas-to-dom", {
-                detail: { ctd: true }
-            });
+        this._canvas.addEventListener("mousemove", (e) => {
+            const mouseX = e.x;
+            const mouseY = e.y;
+            const canvasX = this._canvas.offsetLeft;
+            const canvasY = this._canvas.offsetTop;
+            const x = mouseX - canvasX;
+            const y = mouseY - canvasY;
 
-            document.dispatchEvent(event);
+            for (const object of this._objects) {
+                if (object instanceof QuadrantRing) {
+                    const collideItem = object.verifyColision({ x, y });
+
+                    if (collideItem != null) {
+                        if (this._currPointFocus?.index !== collideItem.index) {
+                            this._currPointFocus = collideItem;
+                            const event = new CustomEvent("pointenter", {
+                                detail: collideItem,
+                            })
+
+                            this._canvas.dispatchEvent(event);
+                        }
+
+                        return;
+                    }
+                }
+            }
+
+            if (this._currPointFocus != null) {
+                const event = new CustomEvent("pointleave", {
+                    detail: this._currPointFocus.data,
+                })
+
+                this._canvas.dispatchEvent(event);
+            }
+
+            this._currPointFocus = null;
         });
     }
 }

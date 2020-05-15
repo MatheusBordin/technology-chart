@@ -1,5 +1,7 @@
 import { IVector } from "./position";
 
+export type PointColisionValidation = (point: IVector) => boolean;
+
 /**
  * Point object attribute type.
  */
@@ -11,9 +13,13 @@ export interface IPointAttributes {
     size: {
         canvas: number;
         ring: number;
+        point: number;
     };
     position: {
         fromOrigin: number;
         spacement: IVector;
+    };
+    validation: {
+        colision: PointColisionValidation;
     };
 }
