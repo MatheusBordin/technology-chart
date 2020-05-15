@@ -15,7 +15,8 @@
         body,
         .container {
             width: 100%;
-            height: 100%;;
+            height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         .container {
@@ -29,19 +30,55 @@
             max-height: 100%;
             border: 1px solid red;
         }
+        #info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: row;
+            margin-top: 20px;
+        }
+        #info .section {
+            display: flex;
+            flex-direction: column;
+            min-width: 140px;
+            margin: 12px;
+            line-height: 24px;
+        }
+        #info .title {
+            font-size: 18px;
+        }
+        #info .subsection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        #info .subtitle {
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+        #info .item {
+            line-height: 12px;
+            font-size: 11px;
+            font-weight: 400;
+            text-transform: none;
+        }
     </style>
 
     <script src="technology-chart.min.js"></script>
 </head>
 <body>
+    <div id="info"></div>
     <div class="container">
         <canvas width="500" height="500"></canvas>
     </div>
 
+
     <script>
         const canvas = document.querySelector("canvas");
+        const infoEl = document.getElementById("info");
 
-        const chart = new TechnologyChart.Chart(canvas, {
+        const settings = {
             quadrants: ["Frameworks", "Infra", "Data", "Languages"],
             rings: ["Adopt", "Access", "Trial", "Hold"],
             layout: {
@@ -68,10 +105,88 @@
                     ring: "Hold",
                     value: "Teste",
                 },
+                {
+                    quadrant: "Languages",
+                    ring: "Hold",
+                    value: "Teste2",
+                },
             ]
-        });
+        };
+
+        const chart = new TechnologyChart.Chart(canvas, settings, infoEl);
 
         chart.draw();
+
+        infoEl.addEventListener('chart', console.log);
+        
+        const sectionDivs = settings.quadrants.reduce((sectionsAcc, quadrant) => {
+            // create section element
+            const sectionDivEl = document.createElement('div');
+            sectionDivEl.classList.add('section');
+
+            // create title element
+            const titleDivEl = document.createElement('div');
+            titleDivEl.classList.add('title');
+            titleDivEl.innerText = quadrant;
+
+            sectionDivEl.appendChild(titleDivEl);
+
+            // create rings element
+            const ringDivs = settings.rings.reduce((ringsAcc, ring) => {
+                const ringDivEl  = document.createElement('div');
+                ringDivEl.classList.add('subtitle');
+                ringDivEl.innerText = ring;
+                return {
+                    ...ringsAcc,
+                    [ring]: ringDivEl,
+                };
+            }, {});
+
+            const subSectionDivEl = document.createElement('div');
+            subSectionDivEl.classList.add('subsection');
+
+            // append rings elements to section
+            Object.values(ringDivs).forEach(div => subSectionDivEl.appendChild(div));
+            sectionDivEl.appendChild(subSectionDivEl);
+
+            return {
+                ...sectionsAcc,
+                [quadrant]: {
+                    section: sectionDivEl,
+                    title: titleDivEl,
+                    rings: ringDivs
+                },
+            };
+        }, {});
+
+        // print section divs
+        Object.values(sectionDivs).forEach(({ section }) => {
+            infoEl.appendChild(section);
+        });
+
+        console.log(sectionDivs);
+        // print all elements
+        settings.data.forEach(({ quadrant, ring, value }) => {
+            const div = document.createElement('div');
+            div.innerText = value;
+            div.classList.add('item');
+            div.addEventListener('mouseenter', function() {
+                const event = new CustomEvent("dom-mouseenter", {
+                    detail: { value }
+                });
+                canvas.dispatchEvent(event);
+            });
+            div.addEventListener('mouseleave', function() {
+                const event = new CustomEvent("dom-mouseleave", {
+                    detail: { value }
+                });
+                canvas.dispatchEvent(event);
+            });
+            sectionDivs[quadrant].rings[ring].appendChild(div);
+        });
+
+        canvas.addEventListener('dom-mouseenter', console.log)
+
     </script>
 </body>
 </html>

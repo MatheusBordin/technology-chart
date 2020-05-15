@@ -2,3 +2,5 @@ dist/
 node_modules/
 preview/**/*
 !preview/index.html
+# should use yarn
+package-lock.json
