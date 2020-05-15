@@ -1,7 +1,7 @@
 /**
  * Position interface.
  */
-export interface IPosition {
+export interface IVector {
     x: number;
     y: number;
 }

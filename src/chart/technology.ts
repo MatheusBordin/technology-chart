@@ -51,7 +51,7 @@ export class TechnologyChart {
      * Size of the ring.
      */
     public get ringSize() {
-        const spacementNormalized = this._settings.layout.quadrantSpacement / this.ringCount;
+        const spacementNormalized = (this._settings.layout.quadrantSpacement / 2) / this.ringCount;
         const ringSize = (this.size / 2) / this.ringCount;
 
         return ringSize - spacementNormalized;
@@ -105,6 +105,7 @@ export class TechnologyChart {
                             y: this.size / 2,
                         },
                         size: {
+                            canvas: this.size,
                             ring: this.ringSize,
                             quadrant: this.quadrantSize,
                         },

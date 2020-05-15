@@ -1,15 +1,16 @@
-import { IPosition } from "./position";
+import { IVector } from "./position";
 
 /**
  * Quadrant ring object attribute type.
  */
 export interface IQuadrantRingAttributes {
-    position: IPosition;
+    position: IVector;
     index: {
         quadrant: number;
         ring: number;
     },
     size: {
+        canvas: number;
         quadrant: number;
         ring: number;
     },

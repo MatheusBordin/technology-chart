@@ -1,4 +1,4 @@
-import { IPosition } from "./position";
+import { IVector } from "./position";
 
 /**
  * Point object attribute type.
@@ -9,10 +9,11 @@ export interface IPointAttributes {
         end: number;
     };
     size: {
+        canvas: number;
         ring: number;
     };
     position: {
         fromOrigin: number;
-        spacement: IPosition;
+        spacement: IVector;
     };
 }

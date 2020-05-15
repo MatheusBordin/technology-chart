@@ -1,6 +1,7 @@
-import { IPosition } from "../types/position";
+import { IVector } from "../types/position";
 import { IQuadrantRingAttributes } from "../types/quadrant-ring";
 import { SettingData } from "../types/setting";
+import { displacementSignal } from "../utils/displacement";
 import { BaseObject } from "./base";
 import { Point } from "./point";
 
@@ -34,29 +35,17 @@ export class QuadrantRing extends BaseObject {
     public get endAngle() {
         return this.startAngle + this._attrs.size.quadrant;
     }
+
     /**
      * Return the spacement for each direction: x and y.
      */
-    public get spacement(): IPosition {
+    public get spacement(): IVector {
         const spacement = this._attrs.layout.spacement / 2;
-        const rightTop = Math.PI / 2;
-        const rightDown = Math.PI * 2;
-        const leftTop = Math.PI;
-        const leftDown = Math.PI * 3 / 2;
-
-        if (this.startAngle < rightTop) {
-            return { x: spacement, y: spacement };
-        } else if (this.startAngle < leftTop) {
-            return { x: -spacement, y: spacement };
-        } else if (this.startAngle < leftDown) {
-            return { x: -spacement, y: -spacement };
-        } else if (this.startAngle < rightDown) {
-            return { x: spacement, y: -spacement };
-        }
+        const signal = displacementSignal(this.startAngle);
 
         return {
-            x: 0,
-            y: 0,
+            x: spacement * signal.x,
+            y: spacement * signal.y,
         };
     }
 
@@ -66,7 +55,7 @@ export class QuadrantRing extends BaseObject {
      * @readonly
      * @memberof QuadrantRing
      */
-    public get position(): IPosition {
+    public get position(): IVector {
         const spacement = this.spacement;
 
         return {
@@ -125,6 +114,7 @@ export class QuadrantRing extends BaseObject {
                     spacement: this.spacement,
                 },
                 size: {
+                    canvas: this._attrs.size.canvas,
                     ring: this._attrs.size.ring,
                 }
             })
