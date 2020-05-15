@@ -27,7 +27,7 @@ export class Point extends BaseObject {
      * The size of point.
      */
     public get size() {
-        return 20;
+        return 10;
     }
 
     /**
@@ -57,7 +57,7 @@ export class Point extends BaseObject {
         context.beginPath();
         // Draw the circle.
         context.moveTo(this._position.x, this._position.y);
-        context.arc(this._position.x, this._position.y, this.size / 2, 0, Math.PI * 2);
+        context.arc(this._position.x, this._position.y, this.size, 0, Math.PI * 2);
         context.fillStyle = "#222";
         context.fill();
         // Draw the label
