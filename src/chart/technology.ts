@@ -61,6 +61,54 @@ export class TechnologyChart {
     }
 
     /**
+     * Mark point in chart.
+     */
+    public markPoint(quadrant: string, ring: string, value: string) {
+        const object = this._objects.find(x => {
+            if (x instanceof QuadrantRing) {
+                return x.quadrant === quadrant && x.ring === ring;
+            }
+
+            return false;
+        }) as QuadrantRing;
+        if (object == null) {
+            return;
+        }
+
+        const point = object.points.find(x => x.data.value === value);
+        if (point  == null) {
+            return;
+        }
+
+        point.marked = true;
+        this.draw();
+    }
+
+    /**
+     * Mark point in chart.
+     */
+    public unmarkPoint(quadrant: string, ring: string, value: string) {
+        const object = this._objects.find(x => {
+            if (x instanceof QuadrantRing) {
+                return x.quadrant === quadrant && x.ring === ring;
+            }
+
+            return false;
+        }) as QuadrantRing;
+        if (object == null) {
+            return;
+        }
+
+        const point = object.points.find(x => x.data.value === value);
+        if (point  == null) {
+            return;
+        }
+
+        point.marked = false;
+        this.draw();
+    }
+
+    /**
      * Draw a chart.
      */
     public draw(reset = false) {
@@ -79,13 +127,17 @@ export class TechnologyChart {
      * Prepare draw process.
      */
     private _prepare() {
+        // Adjust size to be responsive.
         this._adjustSize();
 
         // Create objects.
         this._objects = [];
 
-        const firstRadius = calcFirstRingRadius((this.size - this._settings.layout.quadrantSpacement) / 2, this.ringCount);
+        // The ring size is an PG, to calculate the rings item size the first item value is needed.
+        const ringTotalSize = (this.size - this._settings.layout.quadrantSpacement) / 2; // PG summation.
+        const firstRadius = calcFirstRingRadius(ringTotalSize, this.ringCount);
 
+        // Populate objects.
         this._settings.quadrants.forEach((quadrant, qI) => {
             let radiusAcc = 0;
 
@@ -108,6 +160,10 @@ export class TechnologyChart {
         return new QuadrantRing(
             this._settings.data.filter(x => x.quadrant === quadrant && x.ring === ring),
             {
+                label: {
+                    quadrant,
+                    ring,
+                },
                 index: {
                     quadrant: qI,
                     ring: rI,
@@ -115,6 +171,9 @@ export class TechnologyChart {
                 layout: {
                     spacement: this._settings.layout.quadrantSpacement,
                     color: this._settings.layout.colors[qI][rI],
+                    point: {
+                        hightlightColor: this._settings.layout.point.highlightColor,
+                    }
                 },
                 position: {
                     x: this.size / 2,

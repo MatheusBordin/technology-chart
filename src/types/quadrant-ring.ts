@@ -4,6 +4,10 @@ import { IVector } from "./position";
  * Quadrant ring object attribute type.
  */
 export interface IQuadrantRingAttributes {
+    label: {
+        quadrant: string;
+        ring: string;
+    };
     position: IVector;
     index: {
         quadrant: number;
@@ -18,5 +22,8 @@ export interface IQuadrantRingAttributes {
     layout: {
         spacement: number;
         color: string;
+        point: {
+            hightlightColor: string;
+        }
     }
 }

@@ -33,6 +33,9 @@ export function validateSetting(setting: ISetting) {
                 ["#dba374", "#e3b894", "#e6c3a5", "#f2dbc7"]
             ],
             quadrantSpacement: setting.layout?.quadrantSpacement ?? 0,
+            point: {
+                highlightColor: setting.layout?.point?.highlightColor ?? "red",
+            },
         }
     };
 

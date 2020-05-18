@@ -12,6 +12,7 @@ export class Point extends BaseObject {
     private _attrs: IPointAttributes;
     private _data: ISettingData;
     private _position: IVector;
+    private _marked = false;
 
     constructor(data: ISettingData, attributes: IPointAttributes) {
         super();
@@ -20,6 +21,20 @@ export class Point extends BaseObject {
         this._data = data;
 
         this._prepare();
+    }
+
+    /**
+     * Mark point as highlight.
+     */
+    public set marked(value: boolean) {
+        this._marked = value;
+    }
+
+    /**
+     * Returns if the point has marked.
+     */
+    public get marked() {
+        return this._marked;
     }
 
     /**
@@ -64,7 +79,11 @@ export class Point extends BaseObject {
         // Draw the circle.
         context.moveTo(this._position.x, this._position.y);
         context.arc(this._position.x, this._position.y, this.size, 0, Math.PI * 2);
-        context.fillStyle = "#222";
+        if (!this.marked) {
+            context.fillStyle = "#222";
+        } else {
+            context.fillStyle = this._attrs.layout.highlightColor;
+        }
         context.fill();
 
         // Draw the label

@@ -251,24 +251,20 @@
                 return infoLeftEl.appendChild(section);
             infoRightEl.appendChild(section);
         });
-      
+
         // print all elements
         settings.data.forEach(({ quadrant, ring, value }) => {
             const div = document.createElement('div');
             div.innerText = value;
             div.classList.add('item');
+
             div.addEventListener('mouseenter', function() {
-                const event = new CustomEvent("dom-mouseenter", {
-                    detail: { value }
-                });
-                canvas.dispatchEvent(event);
+                chart.markPoint(quadrant, ring, value);
             });
             div.addEventListener('mouseleave', function() {
-                const event = new CustomEvent("dom-mouseleave", {
-                    detail: { value }
-                });
-                canvas.dispatchEvent(event);
+                chart.unmarkPoint(quadrant, ring, value);
             });
+            
             sectionDivs[quadrant].rings[ring].appendChild(div);
         });
     </script>
