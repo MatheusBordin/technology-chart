@@ -1,8 +1,9 @@
 import { BaseObject } from "../objects/base";
 import { Point } from "../objects/point";
 import { QuadrantRing } from "../objects/quadrant-ring";
-import { Setting } from "../types/setting";
+import { ISetting } from "../types/setting";
 import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
+import { validateSetting } from "../utils/setting";
 
 /**
  * Technology chart.
@@ -10,13 +11,13 @@ import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
  */
 export class TechnologyChart {
     private _canvas: HTMLCanvasElement;
-    private _settings: Setting;
+    private _settings: ISetting;
     private _objects: BaseObject[];
     private _currPointFocus: Point;
 
 	constructor(canvas, settings) {
         this._canvas = canvas;
-        this._settings = Setting.create(settings);
+        this._settings = validateSetting(settings);
         this._objects = [];
 
         this._prepare();

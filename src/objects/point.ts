@@ -1,6 +1,6 @@
 import { IPointAttributes } from "../types/point";
 import { IVector } from "../types/position";
-import { SettingData } from "../types/setting";
+import { ISettingData } from "../types/setting";
 import { BaseObject } from "./base";
 
 /**
@@ -10,10 +10,10 @@ import { BaseObject } from "./base";
  */
 export class Point extends BaseObject {
     private _attrs: IPointAttributes;
-    private _data: SettingData;
+    private _data: ISettingData;
     private _position: IVector;
 
-    constructor(data: SettingData, attributes: IPointAttributes) {
+    constructor(data: ISettingData, attributes: IPointAttributes) {
         super();
 
         this._attrs = attributes;

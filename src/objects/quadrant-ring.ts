@@ -1,6 +1,6 @@
 import { IVector } from "../types/position";
 import { IQuadrantRingAttributes } from "../types/quadrant-ring";
-import { SettingData } from "../types/setting";
+import { ISettingData } from "../types/setting";
 import { displacementSignal } from "../utils/displacement";
 import { BaseObject } from "./base";
 import { Point } from "./point";
@@ -11,10 +11,10 @@ import { Point } from "./point";
  */
 export class QuadrantRing extends BaseObject {
     private _attrs: IQuadrantRingAttributes;
-    private _data: SettingData[];
+    private _data: ISettingData[];
     private _points: Point[];
 
-    constructor(data: SettingData[], attributes: IQuadrantRingAttributes) {
+    constructor(data: ISettingData[], attributes: IQuadrantRingAttributes) {
         super();
 
         this._attrs = attributes;
