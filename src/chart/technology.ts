@@ -60,7 +60,7 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
      * Size of the quadrant, in radians.
      */
     public get quadrantSize() {
-        return Math.PI*2 / this.quadrantCount;
+        return Math.PI*2 / 4;
     }
 
     /**

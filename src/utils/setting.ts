@@ -8,6 +8,10 @@ export function validateSetting(setting: ISetting) {
         throw new Error("[Technology Chart] 'setting.quadrants' should exists and not be empty");
     }
 
+    if (setting.quadrants.length > 4) {
+        throw new Error("[Technology Chart] 'setting.quadrants' length should be lower than four");
+    }
+
     if (!Array.isArray(setting.rings) || setting.rings.length === 0) {
         throw new Error("[Technology Chart] 'setting.rings' should exists and not be empty");
     }
