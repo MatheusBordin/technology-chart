@@ -1,7 +1,9 @@
+import { EventEmitter } from "../core/event-emitter";
 import { BaseObject } from "../objects/base";
 import { Point } from "../objects/point";
 import { QuadrantRing } from "../objects/quadrant-ring";
 import { ISetting } from "../types/setting";
+import { TechnologyChartEvent } from "../utils/event";
 import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
 import { validateSetting } from "../utils/setting";
 
@@ -9,13 +11,14 @@ import { validateSetting } from "../utils/setting";
  * Technology chart.
  * Entrypoint of rendering process.
  */
-export class TechnologyChart {
+export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
     private _canvas: HTMLCanvasElement;
     private _settings: ISetting;
     private _objects: BaseObject[];
     private _currPointFocus: Point;
 
 	constructor(canvas, settings) {
+        super();
         this._canvas = canvas;
         this._settings = validateSetting(settings);
         this._objects = [];
@@ -134,7 +137,7 @@ export class TechnologyChart {
         this._objects = [];
 
         // The ring size is an PG, to calculate the rings item size the first item value is needed.
-        const ringTotalSize = (this.size - this._settings.layout.quadrantSpacement) / 2; // PG summation.
+        const ringTotalSize = (this.size - this._settings.layout.quadrantSpacement - this._settings.layout.padding * 2) / 2; // PG summation.
         const firstRadius = calcFirstRingRadius(ringTotalSize, this.ringCount);
 
         // Populate objects.
@@ -225,11 +228,8 @@ export class TechnologyChart {
                     if (collideItem != null) {
                         if (this._currPointFocus?.index !== collideItem.index) {
                             this._currPointFocus = collideItem;
-                            const event = new CustomEvent("pointenter", {
-                                detail: collideItem,
-                            })
 
-                            this._canvas.dispatchEvent(event);
+                            this.emit("pointhoverin", collideItem);
                         }
 
                         return;
@@ -238,11 +238,7 @@ export class TechnologyChart {
             }
 
             if (this._currPointFocus != null) {
-                const event = new CustomEvent("pointleave", {
-                    detail: this._currPointFocus.data,
-                })
-
-                this._canvas.dispatchEvent(event);
+                this.emit("pointhoverout", this._currPointFocus);
             }
 
             this._currPointFocus = null;

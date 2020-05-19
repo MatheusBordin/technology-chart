@@ -14,6 +14,7 @@ export interface ISetting {
 export interface ISettingLayout {
     colors?: string[][];
     quadrantSpacement?: number;
+    padding?: number;
     point?: {
         highlightBg?: string;
         bg?: string;
