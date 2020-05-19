@@ -22,4 +22,9 @@ export interface IPointAttributes {
     validation: {
         colision: PointColisionValidation;
     };
+    layout: {
+        highlightBg: string;
+        bg: string;
+        textColor: string;
+    }
 }

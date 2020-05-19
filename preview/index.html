@@ -117,19 +117,8 @@
         const canvas = document.querySelector("canvas");
         const tooltip = document.getElementById("tooltip");
 
-        canvas.addEventListener("pointenter", (e) => {
-            const sections = document.querySelectorAll(".section");
-            const section = find(sections, x => x.querySelector(".title").innerText === e.detail.data.quadrant);
-            const subtitle = find(section.querySelectorAll(".subtitle"), x => !!x.innerText.match(e.detail.data.ring.toUpperCase()));
-            find(subtitle.querySelectorAll(".item"), x => x.innerText === e.detail.data.value).classList.add("active");
-        });
-
-        canvas.addEventListener("pointleave", (e) => {
-            document.querySelector(".item.active").classList.remove("active");
-        });
-
         const settings = {
-            quadrants: ["Frameworks", "Infra", "Data", "Languages"],
+            quadrants: ["Frameworks"],
             rings: ["Adopt", "Assess", "Trial", "Hold"],
             layout: {
                 quadrantSpacement: 10,
@@ -153,7 +142,8 @@
                 {
                     quadrant: "Frameworks",
                     ring: "Adopt",
-                    value: "Teste",
+                    value: "AngularJS",
+                    bg: "http://localhost:10001/icon.png"
                 },
                 {
                     quadrant: "Infra",
@@ -179,6 +169,7 @@
                     quadrant: "Languages",
                     ring: "Hold",
                     value: "Teste",
+                    bg: "http://localhost:10001/icon.png"
                 },
                 {
                     quadrant: "Languages",
@@ -199,6 +190,17 @@
         };
 
         const chart = new TechnologyChart.Chart(canvas, settings);
+
+        chart.on("pointhoverin", (e) => {
+            const sections = document.querySelectorAll(".section");
+            const section = find(sections, x => x.querySelector(".title").innerText === e.data.quadrant);
+            const subtitle = find(section.querySelectorAll(".subtitle"), x => !!x.innerText.match(e.data.ring.toUpperCase()));
+            find(subtitle.querySelectorAll(".item"), x => x.innerText === e.data.value).classList.add("active");
+        });
+
+        chart.on("pointhoverout", (e) => {
+            document.querySelector(".item.active").classList.remove("active");
+        });
         
         const infoEl = document.getElementById("info");
         const infoLeftEl = document.getElementById("info-left");
@@ -251,24 +253,20 @@
                 return infoLeftEl.appendChild(section);
             infoRightEl.appendChild(section);
         });
-      
+
         // print all elements
         settings.data.forEach(({ quadrant, ring, value }) => {
             const div = document.createElement('div');
             div.innerText = value;
             div.classList.add('item');
+
             div.addEventListener('mouseenter', function() {
-                const event = new CustomEvent("dom-mouseenter", {
-                    detail: { value }
-                });
-                canvas.dispatchEvent(event);
+                chart.markPoint(quadrant, ring, value);
             });
             div.addEventListener('mouseleave', function() {
-                const event = new CustomEvent("dom-mouseleave", {
-                    detail: { value }
-                });
-                canvas.dispatchEvent(event);
+                chart.unmarkPoint(quadrant, ring, value);
             });
+            
             sectionDivs[quadrant].rings[ring].appendChild(div);
         });
     </script>

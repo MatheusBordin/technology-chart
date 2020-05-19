@@ -1,22 +1,26 @@
+import { EventEmitter } from "../core/event-emitter";
 import { BaseObject } from "../objects/base";
 import { Point } from "../objects/point";
 import { QuadrantRing } from "../objects/quadrant-ring";
-import { Setting } from "../types/setting";
+import { ISetting } from "../types/setting";
+import { TechnologyChartEvent } from "../utils/event";
 import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
+import { validateSetting } from "../utils/setting";
 
 /**
  * Technology chart.
  * Entrypoint of rendering process.
  */
-export class TechnologyChart {
+export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
     private _canvas: HTMLCanvasElement;
-    private _settings: Setting;
+    private _settings: ISetting;
     private _objects: BaseObject[];
     private _currPointFocus: Point;
 
 	constructor(canvas, settings) {
+        super();
         this._canvas = canvas;
-        this._settings = Setting.create(settings);
+        this._settings = validateSetting(settings);
         this._objects = [];
 
         this._prepare();
@@ -56,7 +60,55 @@ export class TechnologyChart {
      * Size of the quadrant, in radians.
      */
     public get quadrantSize() {
-        return Math.PI*2 / this.quadrantCount;
+        return Math.PI*2 / 4;
+    }
+
+    /**
+     * Mark point in chart.
+     */
+    public markPoint(quadrant: string, ring: string, value: string) {
+        const object = this._objects.find(x => {
+            if (x instanceof QuadrantRing) {
+                return x.quadrant === quadrant && x.ring === ring;
+            }
+
+            return false;
+        }) as QuadrantRing;
+        if (object == null) {
+            return;
+        }
+
+        const point = object.points.find(x => x.data.value === value);
+        if (point  == null) {
+            return;
+        }
+
+        point.marked = true;
+        this.draw();
+    }
+
+    /**
+     * Mark point in chart.
+     */
+    public unmarkPoint(quadrant: string, ring: string, value: string) {
+        const object = this._objects.find(x => {
+            if (x instanceof QuadrantRing) {
+                return x.quadrant === quadrant && x.ring === ring;
+            }
+
+            return false;
+        }) as QuadrantRing;
+        if (object == null) {
+            return;
+        }
+
+        const point = object.points.find(x => x.data.value === value);
+        if (point  == null) {
+            return;
+        }
+
+        point.marked = false;
+        this.draw();
     }
 
     /**
@@ -78,13 +130,17 @@ export class TechnologyChart {
      * Prepare draw process.
      */
     private _prepare() {
+        // Adjust size to be responsive.
         this._adjustSize();
 
         // Create objects.
         this._objects = [];
 
-        const firstRadius = calcFirstRingRadius((this.size - this._settings.layout.quadrantSpacement) / 2, this.ringCount);
+        // The ring size is an PG, to calculate the rings item size the first item value is needed.
+        const ringTotalSize = (this.size - this._settings.layout.quadrantSpacement - this._settings.layout.padding * 2) / 2; // PG summation.
+        const firstRadius = calcFirstRingRadius(ringTotalSize, this.ringCount);
 
+        // Populate objects.
         this._settings.quadrants.forEach((quadrant, qI) => {
             let radiusAcc = 0;
 
@@ -107,6 +163,10 @@ export class TechnologyChart {
         return new QuadrantRing(
             this._settings.data.filter(x => x.quadrant === quadrant && x.ring === ring),
             {
+                label: {
+                    quadrant,
+                    ring,
+                },
                 index: {
                     quadrant: qI,
                     ring: rI,
@@ -114,6 +174,11 @@ export class TechnologyChart {
                 layout: {
                     spacement: this._settings.layout.quadrantSpacement,
                     color: this._settings.layout.colors[qI][rI],
+                    point: {
+                        highlightBg: this._settings.layout.point.highlightBg,
+                        bg: this._settings.layout.point.bg,
+                        textColor: this._settings.layout.point.textColor,
+                    }
                 },
                 position: {
                     x: this.size / 2,
@@ -163,11 +228,8 @@ export class TechnologyChart {
                     if (collideItem != null) {
                         if (this._currPointFocus?.index !== collideItem.index) {
                             this._currPointFocus = collideItem;
-                            const event = new CustomEvent("pointenter", {
-                                detail: collideItem,
-                            })
 
-                            this._canvas.dispatchEvent(event);
+                            this.emit("pointhoverin", collideItem);
                         }
 
                         return;
@@ -176,11 +238,7 @@ export class TechnologyChart {
             }
 
             if (this._currPointFocus != null) {
-                const event = new CustomEvent("pointleave", {
-                    detail: this._currPointFocus.data,
-                })
-
-                this._canvas.dispatchEvent(event);
+                this.emit("pointhoverout", this._currPointFocus);
             }
 
             this._currPointFocus = null;

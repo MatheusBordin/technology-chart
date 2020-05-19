@@ -1,6 +1,6 @@
 import { IPointAttributes } from "../types/point";
 import { IVector } from "../types/position";
-import { SettingData } from "../types/setting";
+import { ISettingData } from "../types/setting";
 import { BaseObject } from "./base";
 
 /**
@@ -10,16 +10,31 @@ import { BaseObject } from "./base";
  */
 export class Point extends BaseObject {
     private _attrs: IPointAttributes;
-    private _data: SettingData;
+    private _data: ISettingData;
     private _position: IVector;
+    private _marked = false;
 
-    constructor(data: SettingData, attributes: IPointAttributes) {
+    constructor(data: ISettingData, attributes: IPointAttributes) {
         super();
 
         this._attrs = attributes;
         this._data = data;
 
         this._prepare();
+    }
+
+    /**
+     * Mark point as highlight.
+     */
+    public set marked(value: boolean) {
+        this._marked = value;
+    }
+
+    /**
+     * Returns if the point has marked.
+     */
+    public get marked() {
+        return this._marked;
     }
 
     /**
@@ -51,6 +66,17 @@ export class Point extends BaseObject {
     }
 
     /**
+     * Get bg of point.
+     */
+    public get background() {
+        if (this.marked) {
+            return this._data.highlightBg ?? this._attrs.layout.highlightBg;
+        }
+
+        return this._data.bg ?? this._attrs.layout.bg;
+    }
+
+    /**
      * Draw a point.
      */
     public draw(context: CanvasRenderingContext2D, reset = false) {
@@ -58,20 +84,50 @@ export class Point extends BaseObject {
             this._prepare();
         }
 
-        // Begin.
+        // Draw the bg.
+        if (!!this.background.match(/https?:\/{2}/)) {
+            const img = new Image(25);
+            img.src = this.background;
+            img.onload = () => {
+                const x = this._position.x - 12.5;
+                const y = this._position.y - 12.5;
+
+                context.save();
+                context.beginPath();
+
+                context.drawImage(img, x, y);
+                this.drawText(context);
+
+                context.closePath();
+                context.restore();
+            };
+        } else {
+            context.save();
+            context.beginPath();
+
+            context.moveTo(this._position.x, this._position.y);
+            context.arc(this._position.x, this._position.y, this.size, 0, Math.PI * 2);
+            context.fillStyle = this.background;
+            context.fill();
+
+            this.drawText(context);
+
+            context.closePath();
+            context.restore();
+        }
+    }
+
+    /**
+     * Draw point label.
+     */
+    public drawText(context: CanvasRenderingContext2D) {
         context.save();
         context.beginPath();
-        // Draw the circle.
-        context.moveTo(this._position.x, this._position.y);
-        context.arc(this._position.x, this._position.y, this.size, 0, Math.PI * 2);
-        context.fillStyle = "#222";
-        context.fill();
 
-        // Draw the label
-        context.fillStyle = "white";
+        context.fillStyle = this._attrs.layout.textColor;
         context.font = "10pt sans-serif";
         context.fillText(this._data.index.toString().padStart(2, "0"), this._position.x - 7, this._position.y + 5);
-        // Close
+
         context.closePath();
         context.restore();
     }

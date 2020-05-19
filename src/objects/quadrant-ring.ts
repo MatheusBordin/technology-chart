@@ -1,9 +1,10 @@
 import { IVector } from "../types/position";
 import { IQuadrantRingAttributes } from "../types/quadrant-ring";
-import { SettingData } from "../types/setting";
+import { ISettingData } from "../types/setting";
 import { displacementSignal } from "../utils/displacement";
 import { BaseObject } from "./base";
 import { Point } from "./point";
+import { RingLegend } from "./ring-legend";
 
 /**
  * Quadrant ring object.
@@ -11,10 +12,11 @@ import { Point } from "./point";
  */
 export class QuadrantRing extends BaseObject {
     private _attrs: IQuadrantRingAttributes;
-    private _data: SettingData[];
+    private _data: ISettingData[];
+    private _legend: RingLegend;
     private _points: Point[];
 
-    constructor(data: SettingData[], attributes: IQuadrantRingAttributes) {
+    constructor(data: ISettingData[], attributes: IQuadrantRingAttributes) {
         super();
 
         this._attrs = attributes;
@@ -22,6 +24,20 @@ export class QuadrantRing extends BaseObject {
         this._points = [];
 
         this._prepare();
+    }
+
+    /**
+     * Quadrant label getter.
+     */
+    public get quadrant() {
+        return this._attrs.label.quadrant;
+    }
+
+    /**
+     * Ring label getter.
+     */
+    public get ring() {
+        return this._attrs.label.ring;
     }
 
     /**
@@ -116,6 +132,8 @@ export class QuadrantRing extends BaseObject {
         context.fill();
         context.restore();
 
+        this._legend.draw(context);
+
         for (const point of this._points) {
             point.draw(context, reset);
         }
@@ -126,6 +144,14 @@ export class QuadrantRing extends BaseObject {
      */
     private _prepare() {
         this._points = [];
+
+        this._legend = new RingLegend(
+            this._attrs.label.ring,
+            this.position,
+            this._attrs.size.radius,
+            this._attrs.size.ring,
+            this.startAngle
+        );
 
         for (const item of this._data) {
             const point = new Point(item, {
@@ -144,7 +170,12 @@ export class QuadrantRing extends BaseObject {
                 },
                 validation: {
                     colision: (vector) => this.verifyColision(vector, false) != null
-                }
+                },
+                layout: {
+                    highlightBg: this._attrs.layout.point.highlightBg,
+                    bg: this._attrs.layout.point.bg,
+                    textColor: this._attrs.layout.point.textColor,
+                },
             });
 
             this._points.push(point);
