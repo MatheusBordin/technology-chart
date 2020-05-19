@@ -24,6 +24,8 @@ export function validateSetting(setting: ISetting) {
             ring: x.ring,
             value: x.value,
             index: i,
+            bg: x.bg,
+            highlightBg: x.highlightBg,
         })),
         layout: {
             colors: setting.layout?.colors ?? [
@@ -34,7 +36,9 @@ export function validateSetting(setting: ISetting) {
             ],
             quadrantSpacement: setting.layout?.quadrantSpacement ?? 0,
             point: {
-                highlightColor: setting.layout?.point?.highlightColor ?? "red",
+                highlightBg: setting.layout?.point?.highlightBg ?? "red",
+                bg: setting.layout?.point?.bg ?? "black",
+                textColor: setting.layout?.point?.textColor ?? "white",
             },
         }
     };

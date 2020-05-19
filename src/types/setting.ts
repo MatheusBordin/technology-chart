@@ -15,7 +15,9 @@ export interface ISettingLayout {
     colors?: string[][];
     quadrantSpacement?: number;
     point?: {
-        highlightColor?: string;
+        highlightBg?: string;
+        bg?: string;
+        textColor?: string;
     }
 }
 
@@ -26,5 +28,7 @@ export interface ISettingData {
     quadrant: string;
     ring: string;
     value: string;
+    bg?: string;
+    highlightBg?: string;
     index?: number;
 }

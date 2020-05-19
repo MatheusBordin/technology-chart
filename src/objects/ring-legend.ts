@@ -58,6 +58,10 @@ export class RingLegend extends BaseObject {
             x += displacementSignal(this._startAngle).x * this._radius - this._ring;
         }
 
+        const rotAngle = this._startAngle >= Math.PI / 2 ? this._startAngle - Math.PI / 2 : this._startAngle;
+        context.moveTo(0, 0);
+        context.rotate(rotAngle);
+
         context.fillText(this._label, x, this._center.y);
         context.closePath();
         context.restore();

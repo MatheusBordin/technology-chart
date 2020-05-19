@@ -172,7 +172,9 @@ export class QuadrantRing extends BaseObject {
                     colision: (vector) => this.verifyColision(vector, false) != null
                 },
                 layout: {
-                    highlightColor: this._attrs.layout.point.hightlightColor,
+                    highlightBg: this._attrs.layout.point.highlightBg,
+                    bg: this._attrs.layout.point.bg,
+                    textColor: this._attrs.layout.point.textColor,
                 },
             });
 

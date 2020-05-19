@@ -23,7 +23,9 @@ export interface IQuadrantRingAttributes {
         spacement: number;
         color: string;
         point: {
-            hightlightColor: string;
+            highlightBg: string;
+            bg: string;
+            textColor: string;
         }
     }
 }

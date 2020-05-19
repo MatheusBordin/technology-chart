@@ -172,7 +172,9 @@ export class TechnologyChart {
                     spacement: this._settings.layout.quadrantSpacement,
                     color: this._settings.layout.colors[qI][rI],
                     point: {
-                        hightlightColor: this._settings.layout.point.highlightColor,
+                        highlightBg: this._settings.layout.point.highlightBg,
+                        bg: this._settings.layout.point.bg,
+                        textColor: this._settings.layout.point.textColor,
                     }
                 },
                 position: {
