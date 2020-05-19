@@ -18,7 +18,7 @@ The code implementation is simple and can be resumed in these steps:
 - Initialization
 
 ##### HTML Preparation
-This library is create using Canvas HTML5 API, so you need an canvas element to initialize the chart.
+This library is created using Canvas HTML5 API, so you need an canvas element to initialize the chart.
 
 ```html
 <html>
@@ -28,7 +28,7 @@ This library is create using Canvas HTML5 API, so you need an canvas element to 
         <style>
             canvas#tech-radar {
                 width: 400px;
-                 /** By default, the canvas always be a squad, using the maximum size [Math.max(width, height)]*/
+                 /** By default, the canvas always be a square, using the maximum size [Math.max(width, height)]*/
             }
         </style>
     </head>
