@@ -1,6 +1,6 @@
 {
     "name": "technology-chart",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "Vanilla library for create technology radar chart using canvas API",
     "main": "dist/index.min.js",
     "types": "dist/index.d.ts",
