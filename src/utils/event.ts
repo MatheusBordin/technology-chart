@@ -1,1 +1,1 @@
-export type TechnologyChartEvent = "pointhoverin" | "pointhoverout";
+export type TechnologyChartEvent = "pointhoverin" | "pointhoverout" | "pointclick";

@@ -102,173 +102,72 @@
 
 
     <script>
-        function find(arr, fn) {
-            for (let i = 0; i < arr.length; i++) {
-                let item = arr[i];
-
-                if (fn(item)) {
-                    return item;
-                }
-            }
-
-            return null;
-        }
-
         const canvas = document.querySelector("canvas");
-        const tooltip = document.getElementById("tooltip");
 
         const settings = {
             quadrants: ["Frameworks"],
             rings: ["Adopt", "Assess", "Trial", "Hold"],
             layout: {
-                quadrantSpacement: 10,
+                quadrantSpacement: 0,
             },
             data: [
-            {
-                    quadrant: "Frameworks",
-                    ring: "Adopt",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Infra",
-                    ring: "Adopt",
-                    value: "Teste",
-                },
                 {
                     quadrant: "Frameworks",
-                    ring: "Adopt",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Frameworks",
-                    ring: "Adopt",
-                    value: "AngularJS",
-                    bg: "http://localhost:10001/icon.png"
-                },
-                {
-                    quadrant: "Infra",
-                    ring: "Assess",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Data",
-                    ring: "Trial",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Data",
-                    ring: "Trial",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Data",
-                    ring: "Trial",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Languages",
                     ring: "Hold",
                     value: "Teste",
                     bg: "http://localhost:10001/icon.png"
                 },
                 {
-                    quadrant: "Languages",
-                    ring: "Hold",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Languages",
-                    ring: "Hold",
-                    value: "Teste",
-                },
-                {
-                    quadrant: "Languages",
+                    quadrant: "Frameworks",
                     ring: "Hold",
                     value: "Teste2",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Hold",
+                    value: "Teste3",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Trial",
+                    value: "Teste4",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Trial",
+                    value: "Teste5",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Trial",
+                    value: "Teste6",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Assess",
+                    value: "Teste7",
+                    bg: "http://localhost:10001/icon.png"
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Adopt",
+                    value: "Teste8",
+                },
+                {
+                    quadrant: "Frameworks",
+                    ring: "Adopt",
+                    value: "Teste9",
+                    bg: "http://localhost:10001/icon.png"
                 },
             ]
         };
 
         const chart = new TechnologyChart.Chart(canvas, settings);
-
-        chart.on("pointhoverin", (e) => {
-            const sections = document.querySelectorAll(".section");
-            const section = find(sections, x => x.querySelector(".title").innerText === e.data.quadrant);
-            const subtitle = find(section.querySelectorAll(".subtitle"), x => !!x.innerText.match(e.data.ring.toUpperCase()));
-            find(subtitle.querySelectorAll(".item"), x => x.innerText === e.data.value).classList.add("active");
-        });
-
-        chart.on("pointhoverout", (e) => {
-            document.querySelector(".item.active").classList.remove("active");
-        });
-        
-        const infoEl = document.getElementById("info");
-        const infoLeftEl = document.getElementById("info-left");
-        const infoRightEl = document.getElementById("info-right");
-
-        const sectionDivs = settings.quadrants.reduce((sectionsAcc, quadrant) => {
-            // create section element
-            const sectionDivEl = document.createElement('div');
-            sectionDivEl.classList.add('section');
-
-            // create title element
-            const titleDivEl = document.createElement('div');
-            titleDivEl.classList.add('title');
-            titleDivEl.innerText = quadrant;
-
-            sectionDivEl.appendChild(titleDivEl);
-
-            // create rings element
-            const ringDivs = settings.rings.reduce((ringsAcc, ring) => {
-                const ringDivEl  = document.createElement('div');
-                ringDivEl.classList.add('subtitle');
-                ringDivEl.innerText = ring;
-                return {
-                    ...ringsAcc,
-                    [ring]: ringDivEl,
-                };
-            }, {});
-
-            const subSectionDivEl = document.createElement('div');
-            subSectionDivEl.classList.add('subsection');
-
-            // append rings elements to section
-            Object.values(ringDivs).forEach(div => subSectionDivEl.appendChild(div));
-            sectionDivEl.appendChild(subSectionDivEl);
-
-            return {
-                ...sectionsAcc,
-                [quadrant]: {
-                    section: sectionDivEl,
-                    title: titleDivEl,
-                    rings: ringDivs
-                },
-            };
-        }, {});
-
-        console.log(sectionDivs);
-        // print section divs
-        Object.entries(sectionDivs).forEach(([key, { section }]) => {
-            if (key == 'Data' || key == 'Frameworks')
-                return infoLeftEl.appendChild(section);
-            infoRightEl.appendChild(section);
-        });
-
-        // print all elements
-        settings.data.forEach(({ quadrant, ring, value }) => {
-            const div = document.createElement('div');
-            div.innerText = value;
-            div.classList.add('item');
-
-            div.addEventListener('mouseenter', function() {
-                chart.markPoint(quadrant, ring, value);
-            });
-            div.addEventListener('mouseleave', function() {
-                chart.unmarkPoint(quadrant, ring, value);
-            });
-            
-            sectionDivs[quadrant].rings[ring].appendChild(div);
-        });
     </script>
 </body>
 </html>

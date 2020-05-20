@@ -47,7 +47,7 @@ export class RingLegend extends BaseObject {
      */
     private _drawLinear(context: CanvasRenderingContext2D) {
         context.save();
-        context.font = "9pt sans-serif";
+        context.font = "11pt sans-serif";
         context.fillStyle = "rgba(0, 0, 0, 0.8)";
         context.beginPath();
 

@@ -15,6 +15,7 @@ export interface IQuadrantRingAttributes {
     },
     size: {
         canvas: number;
+        innerCanvas: number;
         quadrant: number;
         ring: number;
         radius: number;

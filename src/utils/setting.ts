@@ -27,7 +27,7 @@ export function validateSetting(setting: ISetting) {
             quadrant: x.quadrant,
             ring: x.ring,
             value: x.value,
-            index: i,
+            index: i + 1,
             bg: x.bg,
             highlightBg: x.highlightBg,
         })),
