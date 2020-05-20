@@ -2,6 +2,7 @@ import { EventEmitter } from "../core/event-emitter";
 import { BaseObject } from "../objects/base";
 import { Point } from "../objects/point";
 import { QuadrantRing } from "../objects/quadrant-ring";
+import { IVector } from "../types/position";
 import { ISetting } from "../types/setting";
 import { TechnologyChartEvent } from "../utils/event";
 import { calcFirstRingRadius, calcRingRadius } from "../utils/radius";
@@ -57,10 +58,50 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
     }
 
     /**
+     * Get size of content.
+     * Calculate with padding and spacement.
+     *
+     * @readonly
+     * @memberof TechnologyChart
+     */
+    public get innerSize() {
+        return this.size - this._settings.layout.quadrantSpacement - this._settings.layout.padding * 2;
+    }
+
+    /**
      * Size of the quadrant, in radians.
      */
     public get quadrantSize() {
         return Math.PI*2 / 4;
+    }
+
+    /**
+     * Get max radius of quadrant.
+     * All space available.
+     */
+    public get maxRadius() {
+        if (this.quadrantCount === 1) {
+            return this.innerSize;
+        }
+
+        return this.innerSize / 2;
+    }
+
+    /**
+     * Origin of chart.
+     */
+    public get origin(): IVector {
+        if (this.quadrantCount === 1) {
+            return {
+                x: this._settings.layout.padding,
+                y: this._settings.layout.padding,
+            }
+        }
+
+        return {
+            x: this.size / 2,
+            y: this.size / 2,
+        };
     }
 
     /**
@@ -137,8 +178,7 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
         this._objects = [];
 
         // The ring size is an PG, to calculate the rings item size the first item value is needed.
-        const ringTotalSize = (this.size - this._settings.layout.quadrantSpacement - this._settings.layout.padding * 2) / 2; // PG summation.
-        const firstRadius = calcFirstRingRadius(ringTotalSize, this.ringCount);
+        const firstRadius = calcFirstRingRadius(this.maxRadius, this.ringCount);
 
         // Populate objects.
         this._settings.quadrants.forEach((quadrant, qI) => {
@@ -178,14 +218,16 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
                         highlightBg: this._settings.layout.point.highlightBg,
                         bg: this._settings.layout.point.bg,
                         textColor: this._settings.layout.point.textColor,
+                    },
+                    legend: {
+                        textColor: this._settings.layout.legend.textColor,
+                        textSize: this._settings.layout.legend.textSize
                     }
                 },
-                position: {
-                    x: this.size / 2,
-                    y: this.size / 2,
-                },
+                position: this.origin,
                 size: {
                     canvas: this.size,
+                    innerCanvas: this.innerSize,
                     ring: ringSize,
                     radius,
                     quadrant: this.quadrantSize,
@@ -213,6 +255,12 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
             this.draw(true);
         });
 
+        this._canvas.addEventListener("click", () => {
+            if (this._currPointFocus != null) {
+                this.emit("pointclick", this._currPointFocus);
+            }
+        });
+
         this._canvas.addEventListener("mousemove", (e) => {
             const mouseX = e.x;
             const mouseY = e.y;
@@ -226,6 +274,8 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
                     const collideItem = object.verifyColision({ x, y });
 
                     if (collideItem != null) {
+                        this._canvas.style.cursor = "pointer";
+
                         if (this._currPointFocus?.index !== collideItem.index) {
                             this._currPointFocus = collideItem;
 
@@ -233,6 +283,8 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
                         }
 
                         return;
+                    } else {
+                        this._canvas.style.cursor = "default";
                     }
                 }
             }

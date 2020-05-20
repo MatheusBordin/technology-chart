@@ -19,6 +19,10 @@ export interface ISettingLayout {
         highlightBg?: string;
         bg?: string;
         textColor?: string;
+    },
+    legend?: {
+        textColor?: string;
+        textSize?: string;
     }
 }
 

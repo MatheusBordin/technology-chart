@@ -150,7 +150,10 @@ export class QuadrantRing extends BaseObject {
             this.position,
             this._attrs.size.radius,
             this._attrs.size.ring,
-            this.startAngle
+            this.startAngle,
+            {
+                layout: this._attrs.layout.legend
+            }
         );
 
         for (const item of this._data) {
@@ -162,6 +165,7 @@ export class QuadrantRing extends BaseObject {
                 position: {
                     fromOrigin: this._attrs.size.radius - this._attrs.size.ring,
                     spacement: this.spacement,
+                    origin: this._attrs.position,
                 },
                 size: {
                     canvas: this._attrs.size.canvas,

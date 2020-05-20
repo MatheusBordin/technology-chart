@@ -86,17 +86,20 @@ export class Point extends BaseObject {
 
         // Draw the bg.
         if (!!this.background.match(/https?:\/{2}/)) {
-            const img = new Image(25);
+            const img = new Image();
             img.src = this.background;
             img.onload = () => {
-                const x = this._position.x - 12.5;
-                const y = this._position.y - 12.5;
+                const width = img.naturalWidth;
+                const height = img.naturalHeight;
+
+                const x = this._position.x - width / 2;
+                const y = this._position.y - height / 2;
 
                 context.save();
                 context.beginPath();
 
                 context.drawImage(img, x, y);
-                this.drawText(context);
+                this.drawText(context, true);
 
                 context.closePath();
                 context.restore();
@@ -120,13 +123,15 @@ export class Point extends BaseObject {
     /**
      * Draw point label.
      */
-    public drawText(context: CanvasRenderingContext2D) {
+    public drawText(context: CanvasRenderingContext2D, custom = false) {
         context.save();
         context.beginPath();
 
         context.fillStyle = this._attrs.layout.textColor;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
         context.font = "10pt sans-serif";
-        context.fillText(this._data.index.toString().padStart(2, "0"), this._position.x - 7, this._position.y + 5);
+        context.fillText(this._data.index.toString().padStart(2, "0"), this._position.x, custom ? this._position.y + 5 : this._position.y);
 
         context.closePath();
         context.restore();
@@ -136,10 +141,10 @@ export class Point extends BaseObject {
      * Prepare point position.
      */
     private _prepare(retryCount = 50) {
-        const halfCanvasSize = this._attrs.size.canvas / 2;
+        const halfCanvasSize = this._attrs.position.origin.x;
         const angle = this._attrs.angle.start + Math.random() * (this._attrs.angle.end - this._attrs.angle.start);
         const initPoint = this._attrs.position.fromOrigin + this.size;
-        const ringVariation = (this._attrs.size.ring - this.size) * Math.random();
+        const ringVariation = (this._attrs.size.ring - this.size * 2) * Math.random();
         const distance = initPoint + ringVariation;
 
         const xVar = this._attrs.position.spacement.x;

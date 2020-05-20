@@ -18,6 +18,7 @@ export interface IPointAttributes {
     position: {
         fromOrigin: number;
         spacement: IVector;
+        origin: IVector;
     };
     validation: {
         colision: PointColisionValidation;
