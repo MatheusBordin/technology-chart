@@ -27,6 +27,10 @@ export interface IQuadrantRingAttributes {
             highlightBg: string;
             bg: string;
             textColor: string;
+        },
+        legend: {
+            textColor: string;
+            textSize: string;
         }
     }
 }

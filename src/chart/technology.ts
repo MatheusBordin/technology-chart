@@ -218,6 +218,10 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
                         highlightBg: this._settings.layout.point.highlightBg,
                         bg: this._settings.layout.point.bg,
                         textColor: this._settings.layout.point.textColor,
+                    },
+                    legend: {
+                        textColor: this._settings.layout.legend.textColor,
+                        textSize: this._settings.layout.legend.textSize
                     }
                 },
                 position: this.origin,

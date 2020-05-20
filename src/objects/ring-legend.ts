@@ -1,3 +1,4 @@
+import { ILegendAttributes } from "../types/legend";
 import { IVector } from "../types/position";
 import { angleByArc } from "../utils/circle";
 import { displacementSignal } from "../utils/displacement";
@@ -14,6 +15,7 @@ export class RingLegend extends BaseObject {
         private _radius: number,
         private _ring: number,
         private _startAngle: number,
+        private _attrs: ILegendAttributes,
         private _mode: "linear" | "circle" = "linear",
     ) {
         super();
@@ -47,8 +49,8 @@ export class RingLegend extends BaseObject {
      */
     private _drawLinear(context: CanvasRenderingContext2D) {
         context.save();
-        context.font = "11pt sans-serif";
-        context.fillStyle = "rgba(0, 0, 0, 0.8)";
+        context.font = `${this._attrs.layout.textSize} sans-serif`;
+        context.fillStyle = this._attrs.layout.textColor;
         context.beginPath();
 
         let x = this._center.x;

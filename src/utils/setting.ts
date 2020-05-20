@@ -45,6 +45,10 @@ export function validateSetting(setting: ISetting) {
                 bg: setting.layout?.point?.bg ?? "black",
                 textColor: setting.layout?.point?.textColor ?? "white",
             },
+            legend: {
+                textColor: setting.layout?.legend?.textColor ?? "#000",
+                textSize: setting.layout?.legend?.textSize ?? "11pt",
+            }
         }
     };
 

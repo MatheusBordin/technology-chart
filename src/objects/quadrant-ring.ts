@@ -118,8 +118,6 @@ export class QuadrantRing extends BaseObject {
         context.beginPath();
         context.moveTo(this.position.x, this.position.y);
 
-        console.log(this.position, this._attrs.size.radius, this.startAngle, this.endAngle);
-
         context.arc(
             this.position.x,
             this.position.y,
@@ -152,7 +150,10 @@ export class QuadrantRing extends BaseObject {
             this.position,
             this._attrs.size.radius,
             this._attrs.size.ring,
-            this.startAngle
+            this.startAngle,
+            {
+                layout: this._attrs.layout.legend
+            }
         );
 
         for (const item of this._data) {
