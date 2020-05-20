@@ -39,7 +39,7 @@ export function validateSetting(setting: ISetting) {
                 ["#dba374", "#e3b894", "#e6c3a5", "#f2dbc7"]
             ],
             quadrantSpacement: setting.layout?.quadrantSpacement ?? 0,
-            padding: 10,
+            padding: setting.layout?.padding ?? 10,
             point: {
                 highlightBg: setting.layout?.point?.highlightBg ?? "red",
                 bg: setting.layout?.point?.bg ?? "black",
