@@ -264,38 +264,40 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
         });
 
         this._canvas.addEventListener("mousemove", (e) => {
-            const mouseX = e.x;
-            const mouseY = e.y;
-            const canvasX = this._canvas.offsetLeft;
-            const canvasY = this._canvas.offsetTop;
-            const x = mouseX - canvasX;
-            const y = mouseY - canvasY;
+            if (typeof window !== "undefined") {
+                const mouseX = e.x + window.scrollX;
+                const mouseY = e.y + window.scrollY;
+                const canvasX = this._canvas.offsetLeft;
+                const canvasY = this._canvas.offsetTop;
+                const x = mouseX - canvasX;
+                const y = mouseY - canvasY;
 
-            for (const object of this._objects) {
-                if (object instanceof QuadrantRing) {
-                    const collideItem = object.verifyColision({ x, y });
+                for (const object of this._objects) {
+                    if (object instanceof QuadrantRing) {
+                        const collideItem = object.verifyColision({ x, y });
 
-                    if (collideItem != null) {
-                        this._canvas.style.cursor = "pointer";
+                        if (collideItem != null) {
+                            this._canvas.style.cursor = "pointer";
 
-                        if (this._currPointFocus?.index !== collideItem.index) {
-                            this._currPointFocus = collideItem;
+                            if (this._currPointFocus?.index !== collideItem.index) {
+                                this._currPointFocus = collideItem;
 
-                            this.emit("pointhoverin", collideItem);
+                                this.emit("pointhoverin", collideItem);
+                            }
+
+                            return;
+                        } else {
+                            this._canvas.style.cursor = "default";
                         }
-
-                        return;
-                    } else {
-                        this._canvas.style.cursor = "default";
                     }
                 }
-            }
 
-            if (this._currPointFocus != null) {
-                this.emit("pointhoverout", this._currPointFocus);
-            }
+                if (this._currPointFocus != null) {
+                    this.emit("pointhoverout", this._currPointFocus);
+                }
 
-            this._currPointFocus = null;
+                this._currPointFocus = null;
+            }
         });
     }
 }
