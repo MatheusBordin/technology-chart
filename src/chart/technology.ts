@@ -251,9 +251,11 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
      * Attach events to canvas.
      */
     private _attachEvents() {
-        window.addEventListener("resize", () => {
-            this.draw(true);
-        });
+        if (typeof window !== 'undefined') {
+            window.addEventListener("resize", () => {
+                this.draw(true);
+            });
+        }
 
         this._canvas.addEventListener("click", () => {
             if (this._currPointFocus != null) {
