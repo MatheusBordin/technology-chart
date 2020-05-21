@@ -42,6 +42,7 @@ export function validateSetting(setting: ISetting) {
             padding: setting.layout?.padding ?? 10,
             point: {
                 highlightBg: setting.layout?.point?.highlightBg ?? "red",
+                highlightTextColor: setting.layout?.point?.highlightTextColor ?? "white",
                 bg: setting.layout?.point?.bg ?? "black",
                 textColor: setting.layout?.point?.textColor ?? "white",
             },

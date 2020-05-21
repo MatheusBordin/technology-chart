@@ -25,7 +25,8 @@ export interface IPointAttributes {
     };
     layout: {
         highlightBg: string;
+        highlightTextColor: string;
         bg: string;
         textColor: string;
-    }
+    };
 }

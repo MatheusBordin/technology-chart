@@ -25,6 +25,7 @@ export interface IQuadrantRingAttributes {
         color: string;
         point: {
             highlightBg: string;
+            highlightTextColor: string;
             bg: string;
             textColor: string;
         },

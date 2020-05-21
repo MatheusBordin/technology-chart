@@ -18,6 +18,11 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
     private _objects: BaseObject[];
     private _currPointFocus: Point;
 
+    // Eventhandlers
+    private _resizeHandler: any;
+    private _moveHandler: any;
+    private _clickHandler: any;
+
 	constructor(canvas, settings) {
         super();
         this._canvas = canvas;
@@ -168,6 +173,22 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
     }
 
     /**
+     * Dispose chart.
+     *
+     * @memberof TechnologyChart
+     */
+    public dispose() {
+        this.context.clearRect(0, 0, this.size, this.size);
+
+        if (typeof window !== "undefined") {
+            window.removeEventListener("resize", this._resizeHandler);
+        }
+
+        this._canvas.removeEventListener("click", this._clickHandler);
+        this._canvas.removeEventListener("mousemove", this._moveHandler);
+    }
+
+    /**
      * Prepare draw process.
      */
     private _prepare() {
@@ -216,6 +237,7 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
                     color: this._settings.layout.colors[qI][rI],
                     point: {
                         highlightBg: this._settings.layout.point.highlightBg,
+                        highlightTextColor: this._settings.layout.point.highlightTextColor,
                         bg: this._settings.layout.point.bg,
                         textColor: this._settings.layout.point.textColor,
                     },
@@ -251,19 +273,21 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
      * Attach events to canvas.
      */
     private _attachEvents() {
+        this._resizeHandler = () => {
+            this.draw(true);
+        };
         if (typeof window !== 'undefined') {
-            window.addEventListener("resize", () => {
-                this.draw(true);
-            });
+            window.addEventListener("resize", this._resizeHandler);
         }
 
-        this._canvas.addEventListener("click", () => {
+        this._clickHandler = () => {
             if (this._currPointFocus != null) {
                 this.emit("pointclick", this._currPointFocus);
             }
-        });
+        };
+        this._canvas.addEventListener("click", this._clickHandler);
 
-        this._canvas.addEventListener("mousemove", (e) => {
+        this._moveHandler = (e) => {
             if (typeof window !== "undefined") {
                 const mouseX = e.x + window.scrollX;
                 const mouseY = e.y + window.scrollY;
@@ -298,6 +322,7 @@ export class TechnologyChart extends EventEmitter<TechnologyChartEvent, Point> {
 
                 this._currPointFocus = null;
             }
-        });
+        };
+        this._canvas.addEventListener("mousemove", this._moveHandler);
     }
 }

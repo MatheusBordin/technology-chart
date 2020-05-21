@@ -77,6 +77,17 @@ export class Point extends BaseObject {
     }
 
     /**
+     * Get textColor of point.
+     */
+    public get textColor() {
+        if (this.marked) {
+            return this._data.highlightTextColor ?? this._attrs.layout.highlightTextColor;
+        }
+
+        return this._data.textColor ?? this._attrs.layout.textColor;
+    }
+
+    /**
      * Draw a point.
      */
     public draw(context: CanvasRenderingContext2D, reset = false) {
@@ -127,7 +138,7 @@ export class Point extends BaseObject {
         context.save();
         context.beginPath();
 
-        context.fillStyle = this._attrs.layout.textColor;
+        context.fillStyle = this.textColor;
         context.textAlign = "center";
         context.textBaseline = "middle";
         context.font = "10pt sans-serif";

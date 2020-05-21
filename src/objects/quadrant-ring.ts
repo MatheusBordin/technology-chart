@@ -177,6 +177,7 @@ export class QuadrantRing extends BaseObject {
                 },
                 layout: {
                     highlightBg: this._attrs.layout.point.highlightBg,
+                    highlightTextColor: this._attrs.layout.point.highlightTextColor,
                     bg: this._attrs.layout.point.bg,
                     textColor: this._attrs.layout.point.textColor,
                 },

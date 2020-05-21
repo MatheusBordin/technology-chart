@@ -17,6 +17,7 @@ export interface ISettingLayout {
     padding?: number;
     point?: {
         highlightBg?: string;
+        highlightTextColor?: string;
         bg?: string;
         textColor?: string;
     },
@@ -35,5 +36,7 @@ export interface ISettingData {
     value: string;
     bg?: string;
     highlightBg?: string;
+    textColor?: string;
+    highlightTextColor?: string;
     index?: number;
 }
